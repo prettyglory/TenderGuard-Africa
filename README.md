@@ -1,28 +1,76 @@
 # TenderGuard Africa
 
-Agentic AI procurement decision-support system for auditable public tender evaluation in African institutions.
+**Agentic AI procurement decision-support system for auditable public tender evaluation in African institutions.**
 
 TenderGuard Africa uses an open-weights model, LangGraph, and Model Context Protocol (MCP) tools to review tender evidence, check mandatory compliance, compare prices with historical procurement data, identify supplier-data inconsistencies, and prepare a sourced evaluation report.
 
-The system does not award tenders. It stops for human procurement committee review.
+The system does **not** award tenders. It prepares evidence and stops for human procurement committee review.
+
+---
 
 ## Challenge
 
-TenderGuard Africa was built for the Governance track of the African Agentic AI Design Challenge - The Bid Box Challenge.
+TenderGuard Africa was built for the **Governance Track** of the **African Agentic AI Design Challenge – The Bid Box Challenge**.
 
-**Theme:** Digital Economy - Open Contracting
+**Theme:** Digital Economy – Open Contracting
 
-## Problem
+---
 
-Public procurement teams may spend days manually sorting tender records, checking mandatory documents, comparing prices, reviewing supplier information, and preparing evaluation reports.
+## Problem Statement
 
-This process is repetitive, time-consuming, and difficult to audit when evidence is distributed across multiple records.
+Public procurement teams may spend significant time manually sorting tender records, checking mandatory documents, verifying eligibility requirements, comparing bid prices, reviewing supplier information, and preparing evaluation reports.
 
-TenderGuard Africa automates the evidence-preparation workflow while keeping the final procurement decision with an authorised human committee.
+This process is repetitive and time-consuming. It can also become difficult to audit when evidence is distributed across multiple procurement records and reviewers must manually trace how each conclusion was reached.
+
+TenderGuard Africa addresses this workflow bottleneck by automating evidence preparation and procurement decision support while preserving human accountability.
+
+The AI agent can analyse evidence and highlight findings, but it cannot select a winning bidder or make a final procurement award.
+
+---
+
+## Solution Overview
+
+TenderGuard Africa is an agentic procurement decision-support system that prepares evidence for public tender evaluation.
+
+It uses a locally hosted open-weights model to plan the evaluation workflow, while LangGraph coordinates a sequence of MCP tools that:
+
+1. load tender evidence;
+2. check mandatory bid compliance;
+3. compare submitted prices with historical award data;
+4. review supplier-data inconsistencies;
+5. synthesize sourced findings;
+6. stop for human review.
+
+The autonomous workflow ends at:
+
+```text
+AWAITING_HUMAN_REVIEW
+```
+
+A named human reviewer must approve the consequential report-generation action before a draft evaluation report can be created.
+
+The authorised procurement committee retains the final procurement decision.
+
+---
+
+## Target Users
+
+TenderGuard Africa is designed for:
+
+- public procurement officers;
+- tender evaluation committees;
+- procurement auditors;
+- public-sector oversight bodies;
+- anti-corruption and accountability institutions;
+- public institutions managing competitive procurement.
+
+The system is intended to reduce repetitive evidence-preparation work while keeping consequential procurement decisions under human control.
+
+---
 
 ## What the Agent Does
 
-The agent:
+The TenderGuard agent:
 
 1. Plans the tender evaluation workflow.
 2. Loads tender evidence.
@@ -30,10 +78,40 @@ The agent:
 4. Compares submitted prices with historical award data.
 5. Reviews supplier-data inconsistencies.
 6. Synthesizes sourced findings.
-7. Stops at human review.
-8. Generates a draft report only after named human approval.
+7. Assigns a review priority based on collected evidence.
+8. Stops at human review.
+9. Generates a draft evaluation report only after named human approval.
+10. Leaves the final procurement decision to the authorised human committee.
 
-TenderGuard never automatically awards, rejects, disqualifies, or selects a winning bidder.
+TenderGuard never automatically:
+
+- awards a tender;
+- rejects a bidder;
+- disqualifies a bidder;
+- selects a winning bidder;
+- makes a final procurement decision.
+
+---
+
+## Key Agentic Capabilities
+
+TenderGuard demonstrates:
+
+- planning;
+- reasoning;
+- decision support;
+- MCP tool calling;
+- data retrieval;
+- multi-step execution;
+- workflow automation;
+- recommendation generation;
+- information synthesis;
+- structured output validation;
+- failure handling and retries;
+- human-in-the-loop approval;
+- auditable tool execution.
+
+---
 
 ## One-Command Demo
 
@@ -48,7 +126,9 @@ Install:
 
 The project uses the local open-weights model:
 
-`qwen3:1.7b`
+```text
+qwen3:1.7b
+```
 
 ### Run
 
@@ -61,26 +141,45 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1
 The script:
 
 - creates the Python virtual environment if necessary;
-- installs dependencies;
-- checks Ollama;
+- activates the environment;
+- installs project dependencies;
+- checks for Ollama;
 - downloads Qwen3 1.7B if necessary;
-- runs the TenderGuard evaluation demo.
+- starts the TenderGuard evaluation demo.
+
+The demo evaluates the synthetic problematic bid:
+
+```text
+TG-DEMO-001
+BID-BETA-001
+```
 
 The workflow should finish at:
 
-`AWAITING_HUMAN_REVIEW`
+```text
+AWAITING_HUMAN_REVIEW
+```
+
+This is intentional. The autonomous agent is not allowed to continue to a procurement award.
+
+---
 
 ## Manual Setup
 
-Create the environment:
+Create and activate the Python environment:
 
 ```powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+
+Install TenderGuard and development dependencies:
+
+```powershell
 python -m pip install -e ".[dev]"
 ```
 
-Download the open-weights model:
+Download the local open-weights model:
 
 ```powershell
 ollama pull qwen3:1.7b
@@ -92,6 +191,8 @@ Run the evaluation agent:
 python -m app.agent.run --tender TG-DEMO-001 --bid BID-BETA-001
 ```
 
+---
+
 ## Human Approval and Report Generation
 
 After reviewing the agent findings, a named human reviewer can approve generation of the draft evaluation report:
@@ -100,42 +201,189 @@ After reviewing the agent findings, a named human reviewer can approve generatio
 python -m app.agent.approve --tender TG-DEMO-001 --bid BID-BETA-001 --approved-by "Demo Procurement Reviewer"
 ```
 
-The report is written under:
+The generated report is written under:
 
 ```text
 reports/
 ```
 
-It is marked:
+The report is marked:
 
-`DRAFT_FOR_COMMITTEE_REVIEW`
+```text
+DRAFT_FOR_COMMITTEE_REVIEW
+```
 
-Report generation is not an award decision.
+The report-generation action does not constitute an award decision.
+
+The human procurement committee remains responsible for the final decision.
+
+---
+
+## Architecture
+
+The high-level TenderGuard data flow is:
+
+```text
+Synthetic Procurement Data
+        |
+        v
+Qwen3 1.7B Planning
+        |
+        v
+LangGraph Orchestration
+        |
+        v
+MCP Client
+        |
+        v
+TenderGuard Procurement MCP
+        |
+        +--> load_tender
+        |
+        +--> check_bid_compliance
+        |
+        +--> compare_prices
+        |
+        +--> flag_supplier_risk
+        |
+        v
+Qwen3 Evidence Synthesis
+        |
+        v
+AWAITING_HUMAN_REVIEW
+        |
+        v
+Named Human Approval
+        |
+        v
+generate_evaluation_report
+        |
+        v
+Draft Evaluation Report
+        |
+        v
+Filesystem MCP Read / Verification
+        |
+        v
+Human Procurement Committee
+```
+
+The custom TenderGuard Procurement MCP server and the borrowed Filesystem MCP server do not communicate directly with each other.
+
+The application interacts with them through separate MCP client operations.
+
+See:
+
+```text
+ARCHITECTURE.md
+```
+
+for the detailed system architecture.
+
+---
 
 ## Agent Architecture
 
+TenderGuard uses a stateful agent architecture composed of the following layers.
+
+### Open-Weights Reasoning Layer
+
 TenderGuard uses:
 
-- Qwen3 1.7B as the open-weights reasoning model;
-- Ollama for local model inference;
-- LangGraph for stateful multi-step orchestration;
-- MCP for tool execution;
-- Pydantic for structured model outputs;
-- Pytest for testing and evaluation.
+```text
+qwen3:1.7b
+```
 
-See `ARCHITECTURE.md` for the complete architecture.
+through Ollama.
+
+The model performs:
+
+- workflow planning;
+- evidence synthesis.
+
+Structured model responses are validated using Pydantic.
+
+### Orchestration Layer
+
+LangGraph manages the multi-step evaluation workflow and agent state.
+
+The workflow tracks information such as:
+
+- tender ID;
+- bid ID;
+- planned MCP tools;
+- completed tools;
+- compliance findings;
+- price-analysis findings;
+- supplier-risk findings;
+- evidence summary;
+- review priority;
+- workflow status.
+
+The graph also supports controlled retries for recoverable MCP execution failures.
+
+### Tool Execution Layer
+
+Procurement capabilities are accessed through Model Context Protocol.
+
+The agent communicates with the custom Procurement MCP server using an MCP client session instead of directly importing and calling procurement tool functions.
+
+### Safety Layer
+
+A deterministic evidence guard checks the actual tool findings before assigning review priority.
+
+The system always preserves:
+
+```text
+human_committee_required = true
+```
+
+and:
+
+```text
+final_award_decision = null
+```
+
+during autonomous evaluation.
+
+---
+
+## Model Context Protocol Implementation
+
+TenderGuard uses Model Context Protocol as the execution boundary between the LangGraph workflow and procurement tools.
+
+The application creates an MCP client session and communicates with the custom TenderGuard Procurement MCP server over stdio.
+
+Procurement capabilities are invoked through MCP tool calls rather than by the agent directly calling the underlying Python procurement functions.
+
+This architecture separates:
+
+- AI reasoning;
+- workflow orchestration;
+- tool execution;
+- human approval;
+- file operations.
+
+The project uses two MCP servers:
+
+1. a custom TenderGuard Procurement MCP server;
+2. a borrowed Filesystem MCP server.
+
+---
 
 ## Custom MCP Server
 
 TenderGuard includes its own MCP server:
 
-`TenderGuard Procurement MCP`
+```text
+TenderGuard Procurement MCP
+```
 
-It exposes five tools.
+It exposes five procurement tools.
 
 ### `load_tender`
 
-Loads and normalizes tender records with source information.
+Loads and normalizes tender records together with source information.
 
 ### `check_bid_compliance`
 
@@ -145,77 +393,143 @@ Checks mandatory tender requirements including:
 - mandatory documents;
 - eligibility requirements.
 
-Every finding contains evidence sources.
+Each finding contains source evidence.
 
 ### `compare_prices`
 
-Compares submitted bid prices with historical award values.
+Compares a submitted bid price with historical award values.
 
-It returns:
+It returns information including:
 
 - historical minimum;
-- median;
-- maximum;
+- historical median;
+- historical maximum;
 - percentage deviation;
 - risk classification;
 - source evidence.
 
 ### `flag_supplier_risk`
 
-Identifies supplier-data inconsistencies.
+Reviews supplier-history records and identifies data inconsistencies that may require human attention.
 
-These flags indicate records that require human review. They are not accusations of fraud or misconduct.
+These findings are indicators for further review.
+
+They are not accusations of fraud or misconduct.
 
 ### `generate_evaluation_report`
 
-Writes a sourced draft evaluation report.
+Generates a sourced draft evaluation report.
 
-This action requires a named human approver and does not make a procurement award decision.
+This is a consequential action tool.
+
+It requires:
+
+```text
+approved_by
+```
+
+to contain the name of a human approver.
+
+Without named human approval, report generation is blocked.
+
+The tool does not award or reject a tender.
+
+---
 
 ## Borrowed MCP Server
 
-TenderGuard uses:
+TenderGuard also integrates:
 
-`@modelcontextprotocol/server-filesystem`
+```text
+@modelcontextprotocol/server-filesystem
+```
 
-This MCP server was not written as part of TenderGuard Africa.
+This server was not written as part of TenderGuard Africa.
 
-It provides standardized filesystem operations and access controls. Its TenderGuard integration is restricted to:
+It provides reusable filesystem operations and access controls.
 
-`reports/`
+The TenderGuard integration restricts this server to:
 
-This gives the agent reusable filesystem capabilities without rebuilding a generic filesystem MCP server.
+```text
+reports/
+```
 
-## Open-Weights Model
+It is used to:
 
-One complete TenderGuard workflow runs locally using:
+- list report files;
+- read generated reports;
+- verify report output.
 
-`qwen3:1.7b`
+The borrowed Filesystem MCP does not make procurement decisions and does not communicate directly with the custom Procurement MCP server.
 
-through Ollama.
+---
 
-The open model performs:
+## Human-in-the-Loop Workflow
 
-- workflow planning;
-- evidence synthesis.
+Human oversight is a mandatory part of TenderGuard's architecture.
 
-No closed frontier model is required to complete the evaluation workflow.
+The autonomous evaluation workflow stops at:
 
-## Human-in-the-Loop
-
-The autonomous workflow stops at:
-
-`AWAITING_HUMAN_REVIEW`
+```text
+AWAITING_HUMAN_REVIEW
+```
 
 TenderGuard does not contain an automated tender-award node.
 
-A named human must approve report generation.
+After reviewing the findings, a named human may approve draft report generation.
 
-The authorised procurement committee retains the final procurement decision.
+The flow is:
+
+```text
+Agent Analysis
+      |
+      v
+AWAITING_HUMAN_REVIEW
+      |
+      v
+Human Reviewer
+      |
+      | Named approval
+      v
+Draft Report Generation
+      |
+      v
+Human Procurement Committee
+      |
+      v
+Final Procurement Decision
+```
+
+The final decision is always outside the autonomous agent.
+
+---
+
+## Open-Weights Model
+
+A complete TenderGuard evaluation workflow runs locally using:
+
+```text
+qwen3:1.7b
+```
+
+through Ollama.
+
+The model performs both:
+
+- planning;
+- evidence synthesis.
+
+No closed frontier model is required to complete the core evaluation workflow.
+
+Running the model locally also supports stronger data-sovereignty options for institutions that may not want procurement records sent to an external cloud LLM provider.
+
+---
 
 ## Audit Trail
 
-Custom MCP actions are logged with:
+Custom MCP actions are logged.
+
+Audit records include:
 
 - timestamp;
 - tool name;
@@ -224,11 +538,21 @@ Custom MCP actions are logged with:
 - execution status;
 - human approver where applicable.
 
-Runtime audit records are stored under the `reports/` directory.
+Runtime audit records are stored under:
 
-## Data
+```text
+reports/
+```
 
-The prototype currently uses synthetic procurement records:
+This creates a traceable record of how the evaluation workflow was executed.
+
+Generated runtime logs and reports are excluded from Git tracking.
+
+---
+
+## Data Sources
+
+The current prototype uses synthetic procurement records.
 
 ```text
 data/
@@ -236,42 +560,108 @@ data/
 └── synthetic_bids/
 ```
 
-Tender and historical award records use procurement and OCDS-style fields.
+The dataset contains:
 
-The repository does not claim that these records are live Tanzanian procurement records.
+- synthetic tender records;
+- synthetic bid records;
+- historical award reference records;
+- supplier-history records.
 
-The synthetic dataset is used so the public repository contains no live tender in progress and no personal information.
+Tender and historical records use procurement and OCDS-style fields.
 
-Real open OCDS releases can be integrated in a future deployment.
+The repository does not claim that the current records are live Tanzanian procurement records.
+
+Synthetic data is used so that the public repository does not expose:
+
+- live tender-in-progress information;
+- real bidder confidential information;
+- personal information.
+
+Real public OCDS-compatible releases can be integrated in a future deployment.
+
+---
+
+## Demo Dataset
+
+The main demonstration tender is:
+
+```text
+Tender ID: TG-DEMO-001
+Title: Supply of Computer Equipment
+Estimated Value: TZS 45,000,000
+```
+
+Two synthetic bids are included.
+
+### Alpha Technologies
+
+```text
+Bid ID: BID-ALPHA-001
+Price: TZS 42,000,000
+```
+
+The synthetic record is designed to satisfy the mandatory tender requirements.
+
+### Beta Systems
+
+```text
+Bid ID: BID-BETA-001
+Price: TZS 47,000,000
+```
+
+The synthetic record intentionally includes issues that allow the agent to demonstrate:
+
+- late-submission detection;
+- missing mandatory-document detection;
+- eligibility checking;
+- elevated price comparison;
+- supplier-data inconsistency detection;
+- human review escalation.
+
+---
 
 ## Evaluation
 
-TenderGuard contains 10 documented evaluation tasks.
+TenderGuard includes 10 documented evaluation tasks.
 
-Current results:
+Current evaluation results:
 
-- 9 PASS
-- 1 known FAIL
+```text
+9 PASS
+1 known FAIL
+```
 
 Passing evaluations cover:
 
-- compliant-bid full workflow;
-- problematic-bid full workflow;
-- MCP tool discovery;
-- compliance detection;
-- historical price anomaly detection;
-- supplier-data inconsistency detection;
-- human approval enforcement;
-- filesystem sandboxing;
-- open-model planner stability.
+1. compliant-bid full agent workflow;
+2. problematic-bid full agent workflow;
+3. custom MCP tool discovery;
+4. compliance detection;
+5. historical price-anomaly detection;
+6. supplier-data inconsistency detection;
+7. human approval enforcement;
+8. filesystem sandbox enforcement;
+9. open-model planner repeatability.
 
 The intentionally disclosed unresolved failure is:
 
-`Image-only/scanned PDF extraction`
+```text
+Image-only/scanned PDF extraction
+```
 
 OCR is not implemented in the current prototype.
 
-See `EVALS.md` for the complete evaluation report.
+The failure is documented rather than hidden because evaluation reliability and known limitations are part of the project design.
+
+See:
+
+```text
+EVALS.md
+```
+
+for the complete evaluation report.
+
+---
 
 ## Tests
 
@@ -281,76 +671,186 @@ Run the automated test suite:
 pytest -q
 ```
 
-Run the evaluation suite:
+Run the full evaluation suite:
 
 ```powershell
 python -m evals.run_evals
 ```
+
+---
 
 ## Project Structure
 
 ```text
 TenderGuard-Africa/
 ├── app/
-│   └── agent/
-│       ├── approve.py
-│       ├── filesystem_mcp.py
-│       ├── mcp_client.py
-│       ├── ollama_client.py
-│       ├── run.py
-│       ├── state.py
-│       └── workflow.py
-├── data/
-│   ├── ocds/
-│   └── synthetic_bids/
-├── evals/
-│   ├── run_evals.py
-│   └── results.json
+│   ├── __init__.py
+│   ├── agent/
+│   │   ├── __init__.py
+│   │   ├── approve.py
+│   │   ├── filesystem_mcp.py
+│   │   ├── mcp_client.py
+│   │   ├── ollama_client.py
+│   │   ├── run.py
+│   │   ├── state.py
+│   │   └── workflow.py
+│   ├── api/
+│   │   └── __init__.py
+│   └── ui/
+│
 ├── mcp_servers/
+│   ├── __init__.py
 │   └── procurement/
+│       ├── __init__.py
 │       ├── audit.py
 │       ├── server.py
 │       └── tools/
+│           ├── __init__.py
+│           ├── load_tender.py
+│           ├── check_bid_compliance.py
+│           ├── compare_prices.py
+│           ├── flag_supplier_risk.py
+│           └── generate_evaluation_report.py
+│
+├── data/
+│   ├── ocds/
+│   │   ├── demo_tender.json
+│   │   ├── historical_awards.json
+│   │   └── supplier_history.json
+│   └── synthetic_bids/
+│       ├── bid_alpha.json
+│       └── bid_beta.json
+│
+├── evals/
+│   ├── __init__.py
+│   ├── run_evals.py
+│   └── results.json
+│
 ├── reports/
 ├── tests/
 ├── ARCHITECTURE.md
 ├── EVALS.md
+├── LICENSE
 ├── README.md
 ├── pyproject.toml
+├── .env.example
+├── .gitignore
 └── start.ps1
 ```
 
+---
+
 ## Technology Stack
 
-- Python 3.12
-- MCP Python SDK
-- LangGraph
+### Artificial Intelligence
+
 - Qwen3 1.7B
 - Ollama
+
+### Agent Orchestration
+
+- LangGraph
+
+### Model Context Protocol
+
+- MCP Python SDK
+- TenderGuard Procurement MCP
+- `@modelcontextprotocol/server-filesystem`
+
+### Backend and Validation
+
+- Python 3.12
 - Pydantic
 - HTTPX
+
+### Document Support
+
 - PyPDF
+
+PyPDF is included for document-processing support, but image-only/scanned PDF OCR is not implemented in the current prototype.
+
+### Testing
+
 - Pytest
+
+### Supporting Runtime
+
 - Node.js
-- Filesystem MCP Server
+- npm / npx
+
+### Development and Version Control
+
 - Git
 - GitHub
 
-## Known Limitation
+---
+
+## Known Limitations
+
+### Scanned Documents
 
 Image-only and scanned PDF bid documents are not currently supported because the prototype does not include OCR.
 
-A future version would add:
+### Current Data Scope
 
-- local OCR;
-- page-level source citations;
-- extraction confidence scores;
-- human validation for low-confidence fields.
+The current demonstration uses structured synthetic procurement records rather than live bidder submissions.
+
+### User Interface
+
+The current primary demonstration is command-line based.
+
+The architecture focuses on agent reliability, MCP integration, auditability, and human oversight rather than frontend complexity.
+
+---
+
+## Future Improvements
+
+Future versions of TenderGuard Africa could include:
+
+- ingestion of real public OCDS-compatible procurement releases;
+- structured extraction from PDF tender documents;
+- structured extraction from DOCX bid documents;
+- OCR support for scanned and image-only records;
+- page-level evidence citations;
+- extraction-confidence scoring;
+- human validation of low-confidence extracted fields;
+- additional procurement-risk indicators;
+- persistent database storage;
+- authentication;
+- role-based access control;
+- a web-based procurement review dashboard;
+- institution-specific procurement rules;
+- multilingual procurement support;
+- integrations with public procurement portals where lawful and technically available.
+
+---
 
 ## Safety and Procurement Principle
 
-**TenderGuard Africa prepares the evaluation file. The human procurement committee decides.**
+> **TenderGuard Africa prepares the evaluation file. The human procurement committee decides.**
+
+The system is designed as decision support, not decision replacement.
+
+---
+
+## Repository
+
+Public repository:
+
+```text
+https://github.com/prettyglory/TenderGuard-Africa
+```
+
+---
 
 ## License
 
-MIT License
+TenderGuard Africa is released under the MIT License.
+
+See:
+
+```text
+LICENSE
+```
+
+for details.
