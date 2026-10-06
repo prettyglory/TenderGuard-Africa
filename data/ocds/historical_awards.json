@@ -1,0 +1,56 @@
+{
+  "records": [
+    {
+      "ocid": "ocds-demo-history-001",
+      "title": "Supply of Computer Equipment",
+      "award": {
+        "id": "AWARD-HIST-001",
+        "date": "2026-03-10T10:00:00+03:00",
+        "value": {
+          "amount": 38000000,
+          "currency": "TZS"
+        },
+        "supplier": "Digital Systems Africa Ltd"
+      }
+    },
+    {
+      "ocid": "ocds-demo-history-002",
+      "title": "Supply of Computer Equipment",
+      "award": {
+        "id": "AWARD-HIST-002",
+        "date": "2026-04-18T10:00:00+03:00",
+        "value": {
+          "amount": 40000000,
+          "currency": "TZS"
+        },
+        "supplier": "Tech Supplies Ltd"
+      }
+    },
+    {
+      "ocid": "ocds-demo-history-003",
+      "title": "Supply of Computer Equipment",
+      "award": {
+        "id": "AWARD-HIST-003",
+        "date": "2026-06-21T10:00:00+03:00",
+        "value": {
+          "amount": 41000000,
+          "currency": "TZS"
+        },
+        "supplier": "Africa Computing Ltd"
+      }
+    },
+    {
+      "ocid": "ocds-demo-history-004",
+      "title": "Supply of Computer Equipment",
+      "award": {
+        "id": "AWARD-HIST-004",
+        "date": "2026-08-04T10:00:00+03:00",
+        "value": {
+          "amount": 40000000,
+          "currency": "TZS"
+        },
+        "supplier": "Smart Office Technologies Ltd"
+      }
+    }
+  ]
+}

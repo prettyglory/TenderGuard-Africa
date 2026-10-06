@@ -5,7 +5,12 @@ from mcp.server import MCPServer
 from mcp_servers.procurement.tools.check_bid_compliance import (
     check_bid_compliance_record,
 )
-from mcp_servers.procurement.tools.load_tender import load_tender_record
+from mcp_servers.procurement.tools.compare_prices import (
+    compare_bid_price,
+)
+from mcp_servers.procurement.tools.load_tender import (
+    load_tender_record,
+)
 
 
 mcp = MCPServer("TenderGuard Procurement MCP")
@@ -24,6 +29,12 @@ def check_bid_compliance(
 ) -> dict[str, Any]:
     """Check a bid against mandatory tender requirements with sourced findings."""
     return check_bid_compliance_record(tender_id, bid_id)
+
+
+@mcp.tool()
+def compare_prices(bid_id: str) -> dict[str, Any]:
+    """Compare a bid price with historical award values and return sourced findings."""
+    return compare_bid_price(bid_id)
 
 
 if __name__ == "__main__":
