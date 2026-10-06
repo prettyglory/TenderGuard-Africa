@@ -11,3 +11,4 @@ reports/*.pdf
 .DS_Store
 .vscode/
 .idea/
+reports/*.jsonl
