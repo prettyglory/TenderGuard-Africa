@@ -12,3 +12,4 @@ reports/*.pdf
 .vscode/
 .idea/
 reports/*.jsonl
+reports/*.md
