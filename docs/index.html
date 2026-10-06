@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TenderGuard Africa</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="badge">African Agentic AI Design Challenge · Governance Track</div>
+
+      <h1>TenderGuard Africa</h1>
+
+      <p class="subtitle">
+        Agentic AI decision support for transparent and auditable public tender evaluation.
+      </p>
+
+      <div class="principle">
+        TenderGuard prepares the evaluation file.
+        <strong>The human procurement committee decides.</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="notice">
+      <strong>Interactive Demonstration</strong>
+      <p>
+        This browser demo uses the same synthetic TenderGuard test scenario to illustrate
+        the evaluation workflow. The full Qwen3 + LangGraph + MCP agent runs locally from
+        the public GitHub repository.
+      </p>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <span class="section-label">Tender</span>
+        <h2>Supply of Computer Equipment</h2>
+
+        <div class="detail">
+          <span>Tender ID</span>
+          <strong>TG-DEMO-001</strong>
+        </div>
+
+        <div class="detail">
+          <span>Estimated value</span>
+          <strong>TZS 45,000,000</strong>
+        </div>
+
+        <div class="detail">
+          <span>Deadline</span>
+          <strong>10 Oct 2026 · 12:00 EAT</strong>
+        </div>
+
+        <div class="detail">
+          <span>Required documents</span>
+          <strong>3</strong>
+        </div>
+
+        <p class="source">Source: data/ocds/demo_tender.json</p>
+      </article>
+
+      <article class="card">
+        <span class="section-label">Human-in-the-loop</span>
+        <h2>No automatic award</h2>
+
+        <p>
+          The autonomous workflow can analyse evidence, identify issues and prepare
+          decision-support findings.
+        </p>
+
+        <p>
+          It cannot select a winning bidder or make the final procurement decision.
+        </p>
+
+        <div class="status safe">
+          final_award_decision = null
+        </div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <div>
+          <span class="section-label">Synthetic Bids</span>
+          <h2>Select a bid to evaluate</h2>
+        </div>
+      </div>
+
+      <div class="bid-selector">
+        <button class="bid-button" data-bid="alpha">
+          <strong>Alpha Technologies Ltd</strong>
+          <span>BID-ALPHA-001 · TZS 42,000,000</span>
+        </button>
+
+        <button class="bid-button active" data-bid="beta">
+          <strong>Beta Systems Ltd</strong>
+          <span>BID-BETA-001 · TZS 47,000,000</span>
+        </button>
+      </div>
+
+      <button id="runButton" class="primary">
+        Run TenderGuard Evaluation
+      </button>
+    </section>
+
+    <section id="workflowSection" class="card hidden">
+      <span class="section-label">Agent Workflow</span>
+      <h2>Evaluation execution</h2>
+
+      <div id="steps" class="steps"></div>
+    </section>
+
+    <section id="resultsSection" class="hidden">
+
+      <div class="grid three">
+        <article class="card result-card">
+          <span class="section-label">Compliance</span>
+          <h3 id="complianceStatus"></h3>
+          <div id="complianceFindings"></div>
+        </article>
+
+        <article class="card result-card">
+          <span class="section-label">Price Analysis</span>
+          <h3 id="priceStatus"></h3>
+          <div id="priceFindings"></div>
+        </article>
+
+        <article class="card result-card">
+          <span class="section-label">Supplier Review</span>
+          <h3 id="supplierStatus"></h3>
+          <div id="supplierFindings"></div>
+        </article>
+      </div>
+
+      <article class="card human-review">
+        <span class="section-label">Workflow State</span>
+        <h2 id="reviewState">AWAITING_HUMAN_REVIEW</h2>
+
+        <p id="reviewMessage"></p>
+
+        <div class="decision-box">
+          <div>
+            <span>Review priority</span>
+            <strong id="priority"></strong>
+          </div>
+
+          <div>
+            <span>Human committee required</span>
+            <strong>TRUE</strong>
+          </div>
+
+          <div>
+            <span>Final award decision</span>
+            <strong>NULL</strong>
+          </div>
+        </div>
+
+        <button id="approveButton" class="secondary">
+          Simulate Named Human Approval
+        </button>
+      </article>
+    </section>
+
+    <section id="reportSection" class="card hidden">
+      <span class="section-label">Draft Evaluation Report</span>
+
+      <div class="report-header">
+        <div>
+          <h2>DRAFT_FOR_COMMITTEE_REVIEW</h2>
+          <p>Generated only after named human approval.</p>
+        </div>
+
+        <span class="approved">Human approved</span>
+      </div>
+
+      <div id="reportContent"></div>
+
+      <div class="warning">
+        This report is decision support only. It does not award, reject or disqualify a bidder.
+      </div>
+    </section>
+
+    <section class="grid two">
+      <article class="card">
+        <span class="section-label">Architecture</span>
+        <h2>Agentic + MCP</h2>
+
+        <ul>
+          <li>Qwen3 1.7B open-weights model</li>
+          <li>LangGraph stateful orchestration</li>
+          <li>Custom Procurement MCP server</li>
+          <li>5 procurement MCP tools</li>
+          <li>Borrowed Filesystem MCP server</li>
+          <li>Named human approval gate</li>
+          <li>Auditable tool execution</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <span class="section-label">Evaluation Evidence</span>
+        <h2>9 PASS · 1 Known FAIL</h2>
+
+        <p>
+          TenderGuard includes ten documented evaluation tasks covering agent flow,
+          MCP execution, compliance, pricing, supplier review, human approval,
+          filesystem sandboxing and model repeatability.
+        </p>
+
+        <p>
+          Known limitation: image-only/scanned PDF OCR is not implemented.
+        </p>
+      </article>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <strong>TenderGuard Africa</strong>
+      <span>Open Contracting · Human Accountability · Auditable AI</span>
+
+      <a
+        href="https://github.com/prettyglory/TenderGuard-Africa"
+        target="_blank"
+        rel="noopener"
+      >
+        View Public GitHub Repository
+      </a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
