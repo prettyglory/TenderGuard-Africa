@@ -1,0 +1,17 @@
+{
+  "ocid": "ocds-demo-tz-001",
+  "tender": {
+    "id": "TG-DEMO-001",
+    "title": "Supply of Computer Equipment",
+    "description": "Synthetic tender used for TenderGuard Africa development and testing.",
+    "status": "active",
+    "procurementMethod": "open",
+    "value": {
+      "amount": 45000000,
+      "currency": "TZS"
+    },
+    "procuringEntity": {
+      "name": "Demo Public Institution"
+    }
+  }
+}
