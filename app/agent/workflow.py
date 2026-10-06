@@ -4,30 +4,37 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import RetryPolicy
 
 from app.agent.mcp_client import call_procurement_tool
+from app.agent.ollama_client import (
+    plan_procurement_workflow,
+    synthesize_procurement_evidence,
+)
 from app.agent.state import TenderEvaluationState
 
 
 async def plan_evaluation(
     state: TenderEvaluationState,
 ) -> dict[str, Any]:
-    """
-    Build the controlled evaluation plan.
-
-    The open-weights LLM planner will be added in the next implementation
-    stage. For now this establishes the audited orchestration structure.
-    """
+    plan = await plan_procurement_workflow(
+        state["tender_id"],
+        state["bid_id"],
+    )
 
     return {
-        "plan": [
-            "Load and normalize tender evidence",
-            "Check mandatory bid compliance",
-            "Compare bid price with historical awards",
-            "Review supplier-data inconsistencies",
-            "Synthesize decision-support findings",
-            "Stop for human procurement committee review",
-        ],
-        "status": "PLANNED",
+        "plan": plan.tool_sequence,
+        "plan_rationale": plan.rationale,
+        "completed_tools": [],
+        "status": "PLANNED_BY_OPEN_MODEL",
     }
+
+
+def _mark_complete(
+    state: TenderEvaluationState,
+    tool_name: str,
+) -> list[str]:
+    return [
+        *state.get("completed_tools", []),
+        tool_name,
+    ]
 
 
 async def load_tender_node(
@@ -42,6 +49,10 @@ async def load_tender_node(
 
     return {
         "tender": result,
+        "completed_tools": _mark_complete(
+            state,
+            "load_tender",
+        ),
         "status": "TENDER_LOADED",
     }
 
@@ -59,6 +70,10 @@ async def compliance_node(
 
     return {
         "compliance": result,
+        "completed_tools": _mark_complete(
+            state,
+            "check_bid_compliance",
+        ),
         "status": "COMPLIANCE_CHECKED",
     }
 
@@ -75,6 +90,10 @@ async def price_node(
 
     return {
         "price_analysis": result,
+        "completed_tools": _mark_complete(
+            state,
+            "compare_prices",
+        ),
         "status": "PRICE_CHECKED",
     }
 
@@ -91,65 +110,38 @@ async def supplier_risk_node(
 
     return {
         "supplier_risk": result,
+        "completed_tools": _mark_complete(
+            state,
+            "flag_supplier_risk",
+        ),
         "status": "SUPPLIER_REVIEWED",
     }
+
+
+def route_next(
+    state: TenderEvaluationState,
+) -> str:
+    plan = state["plan"]
+    completed = state.get("completed_tools", [])
+
+    for tool_name in plan:
+        if tool_name not in completed:
+            return tool_name
+
+    return "synthesize"
 
 
 async def synthesize_findings(
     state: TenderEvaluationState,
 ) -> dict[str, Any]:
-    """
-    Synthesize tool evidence without making an award decision.
-    """
-
-    reasons: list[str] = []
-
-    compliance = state["compliance"]
-    price_analysis = state["price_analysis"]
-    supplier_risk = state["supplier_risk"]
-
-    if compliance.get("status") != "COMPLIANT":
-        reasons.append(
-            "One or more mandatory compliance checks failed."
-        )
-
-    price_risk = price_analysis.get("risk_level")
-
-    if price_risk not in {
-        "NORMAL_RANGE",
-        None,
-    }:
-        reasons.append(
-            f"Price analysis requires review: {price_risk}."
-        )
-
-    supplier_level = supplier_risk.get("risk_level")
-
-    if supplier_level not in {
-        "LOW",
-        None,
-    }:
-        reasons.append(
-            f"Supplier-data review requires attention: {supplier_level}."
-        )
-
-    priority = (
-        "ATTENTION_REQUIRED"
-        if reasons
-        else "STANDARD_REVIEW"
+    result = await synthesize_procurement_evidence(
+        state["compliance"],
+        state["price_analysis"],
+        state["supplier_risk"],
     )
 
     return {
-        "decision_support": {
-            "review_priority": priority,
-            "reasons": reasons,
-            "human_committee_required": True,
-            "final_award_decision": None,
-            "note": (
-                "TenderGuard Africa provides decision support only. "
-                "The procurement committee makes the final decision."
-            ),
-        },
+        "decision_support": result.model_dump(),
         "status": "AWAITING_HUMAN_REVIEW",
     }
 
@@ -172,19 +164,19 @@ builder.add_node(
 )
 
 builder.add_node(
-    "check_compliance",
+    "check_bid_compliance",
     compliance_node,
     retry_policy=retry_policy,
 )
 
 builder.add_node(
-    "compare_price",
+    "compare_prices",
     price_node,
     retry_policy=retry_policy,
 )
 
 builder.add_node(
-    "supplier_risk",
+    "flag_supplier_risk",
     supplier_risk_node,
     retry_policy=retry_policy,
 )
@@ -199,30 +191,35 @@ builder.add_edge(
     "plan",
 )
 
-builder.add_edge(
+builder.add_conditional_edges(
     "plan",
+    route_next,
+    {
+        "load_tender": "load_tender",
+        "check_bid_compliance": "check_bid_compliance",
+        "compare_prices": "compare_prices",
+        "flag_supplier_risk": "flag_supplier_risk",
+        "synthesize": "synthesize",
+    },
+)
+
+for node_name in [
     "load_tender",
-)
-
-builder.add_edge(
-    "load_tender",
-    "check_compliance",
-)
-
-builder.add_edge(
-    "check_compliance",
-    "compare_price",
-)
-
-builder.add_edge(
-    "compare_price",
-    "supplier_risk",
-)
-
-builder.add_edge(
-    "supplier_risk",
-    "synthesize",
-)
+    "check_bid_compliance",
+    "compare_prices",
+    "flag_supplier_risk",
+]:
+    builder.add_conditional_edges(
+        node_name,
+        route_next,
+        {
+            "load_tender": "load_tender",
+            "check_bid_compliance": "check_bid_compliance",
+            "compare_prices": "compare_prices",
+            "flag_supplier_risk": "flag_supplier_risk",
+            "synthesize": "synthesize",
+        },
+    )
 
 builder.add_edge(
     "synthesize",

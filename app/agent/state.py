@@ -6,6 +6,8 @@ class TenderEvaluationState(TypedDict, total=False):
     bid_id: str
 
     plan: list[str]
+    plan_rationale: str
+    completed_tools: list[str]
 
     tender: dict[str, Any]
     compliance: dict[str, Any]
