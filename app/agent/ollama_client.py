@@ -18,7 +18,7 @@ class EvaluationPlan(BaseModel):
 class EvidenceSummary(BaseModel):
     review_priority: str
     summary: str
-    key_findings: list[str]
+    reasons: list[str]
     human_committee_required: bool = True
     final_award_decision: None = None
 
@@ -165,7 +165,7 @@ PRICE EVIDENCE:
 SUPPLIER DATA EVIDENCE:
 {supplier_risk}
 
-Summarize the evidence.
+Summarize the evidence and return the concrete evidence-based reasons that justify the review priority.
 
 review_priority must be either:
 - STANDARD_REVIEW
