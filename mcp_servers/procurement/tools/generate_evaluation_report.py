@@ -6,6 +6,9 @@ from mcp_servers.procurement.tools.check_bid_compliance import (
     check_bid_compliance_record,
 )
 from mcp_servers.procurement.tools.compare_prices import compare_bid_price
+from mcp_servers.procurement.tools.flag_supplier_risk import (
+    flag_supplier_risk_record,
+)
 from mcp_servers.procurement.tools.load_tender import load_tender_record
 
 
@@ -26,9 +29,9 @@ def generate_evaluation_report_file(
     approved_by: str,
 ) -> dict[str, Any]:
     """
-    Generate a sourced draft evaluation report for human committee review.
+    Generate a sourced draft evaluation report for committee review.
 
-    Human approval is required before this action writes a report file.
+    Human approval is required before the file is written.
     This function never awards or rejects a tender.
     """
 
@@ -42,6 +45,7 @@ def generate_evaluation_report_file(
     tender = load_tender_record(tender_id)
     compliance = check_bid_compliance_record(tender_id, bid_id)
     price_analysis = compare_bid_price(bid_id)
+    supplier_risk = flag_supplier_risk_record(bid_id)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -64,15 +68,31 @@ def generate_evaluation_report_file(
             f"(Sources: {', '.join(check['sources'])})"
         )
 
-    evidence_lines = []
+    price_evidence_lines = []
 
     for award in price_analysis["evidence"]:
-        evidence_lines.append(
+        price_evidence_lines.append(
             "- "
             f"{award['ocid']} | "
             f"{award['award_id']} | "
             f"{award['amount']} {award['currency']} | "
             f"{award['source_file']}"
+        )
+
+    supplier_flag_lines = []
+
+    if supplier_risk["flags"]:
+        for flag in supplier_risk["flags"]:
+            supplier_flag_lines.append(
+                "- "
+                f"[{flag['severity']}] "
+                f"{flag['finding']} "
+                f"(Sources: {', '.join(flag['sources'])})"
+            )
+    else:
+        supplier_flag_lines.append(
+            "- No supplier-data inconsistency flags were identified "
+            "in the available dataset."
         )
 
     report = f"""# TenderGuard Africa Evaluation Report
@@ -82,7 +102,7 @@ def generate_evaluation_report_file(
 DRAFT FOR HUMAN PROCUREMENT COMMITTEE REVIEW
 
 TenderGuard Africa provides decision support only.
-It does not award, reject, or select a winning bidder.
+It does not award, reject, disqualify, or select a winning bidder.
 
 ## Tender
 
@@ -113,9 +133,19 @@ Finding:
 
 {price_analysis.get('finding')}
 
-## Historical Evidence
+## Historical Price Evidence
 
-{chr(10).join(evidence_lines)}
+{chr(10).join(price_evidence_lines)}
+
+## Supplier Data Review
+
+- Risk Level: {supplier_risk.get('risk_level')}
+- Historical Records Checked: {supplier_risk.get('historical_records_checked')}
+
+{chr(10).join(supplier_flag_lines)}
+
+Supplier-risk flags represent data inconsistencies only.
+They are not findings of fraud or misconduct.
 
 ## Human-in-the-Loop Handoff
 
@@ -123,8 +153,8 @@ Report generation approved by: {approved_by}
 
 Generated at: {generated_at}
 
-The procurement committee must independently review the evidence
-and make the final procurement decision.
+The authorised procurement committee must independently review
+the evidence and make the final procurement decision.
 """
 
     report_path.write_text(report, encoding="utf-8")

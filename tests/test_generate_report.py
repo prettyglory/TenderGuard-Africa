@@ -37,4 +37,6 @@ def test_report_is_generated_after_human_approval(tmp_path, monkeypatch):
 
     assert "DRAFT FOR HUMAN PROCUREMENT COMMITTEE REVIEW" in content
     assert "TenderGuard Africa provides decision support only" in content
+    assert "Supplier Data Review" in content
     assert "Demo Procurement Officer" in content
+    assert "final procurement decision" in content
