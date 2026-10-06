@@ -1,0 +1,30 @@
+{
+  "bid_id": "BID-ALPHA-001",
+  "tender_id": "TG-DEMO-001",
+  "supplier": {
+    "name": "Alpha Technologies Ltd",
+    "identifier": "SYNTH-ALPHA-001"
+  },
+  "submitted_at": "2026-10-09T10:00:00+03:00",
+  "price": {
+    "amount": 42000000,
+    "currency": "TZS"
+  },
+  "documents": [
+    {
+      "code": "BID_FORM",
+      "file": "alpha_bid_form.pdf"
+    },
+    {
+      "code": "BUSINESS_LICENSE",
+      "file": "alpha_business_license.pdf"
+    },
+    {
+      "code": "TAX_CLEARANCE",
+      "file": "alpha_tax_clearance.pdf"
+    }
+  ],
+  "declarations": {
+    "LOCAL_REGISTRATION": true
+  }
+}

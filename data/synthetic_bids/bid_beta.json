@@ -1,0 +1,26 @@
+{
+  "bid_id": "BID-BETA-001",
+  "tender_id": "TG-DEMO-001",
+  "supplier": {
+    "name": "Beta Systems Ltd",
+    "identifier": "SYNTH-BETA-001"
+  },
+  "submitted_at": "2026-10-11T09:30:00+03:00",
+  "price": {
+    "amount": 47000000,
+    "currency": "TZS"
+  },
+  "documents": [
+    {
+      "code": "BID_FORM",
+      "file": "beta_bid_form.pdf"
+    },
+    {
+      "code": "BUSINESS_LICENSE",
+      "file": "beta_business_license.pdf"
+    }
+  ],
+  "declarations": {
+    "LOCAL_REGISTRATION": false
+  }
+}

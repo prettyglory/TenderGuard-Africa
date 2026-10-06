@@ -6,12 +6,33 @@
     "description": "Synthetic tender used for TenderGuard Africa development and testing.",
     "status": "active",
     "procurementMethod": "open",
+    "submissionDeadline": "2026-10-10T12:00:00+03:00",
     "value": {
       "amount": 45000000,
       "currency": "TZS"
     },
     "procuringEntity": {
       "name": "Demo Public Institution"
-    }
+    },
+    "requiredDocuments": [
+      {
+        "code": "BID_FORM",
+        "name": "Signed Bid Form"
+      },
+      {
+        "code": "BUSINESS_LICENSE",
+        "name": "Valid Business License"
+      },
+      {
+        "code": "TAX_CLEARANCE",
+        "name": "Valid Tax Clearance Certificate"
+      }
+    ],
+    "eligibilityRequirements": [
+      {
+        "code": "LOCAL_REGISTRATION",
+        "description": "Supplier must be legally registered to operate."
+      }
+    ]
   }
 }
