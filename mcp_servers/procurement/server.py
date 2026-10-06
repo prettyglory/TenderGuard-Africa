@@ -7,6 +7,9 @@ from mcp_servers.procurement.tools.check_bid_compliance import (
     check_bid_compliance_record,
 )
 from mcp_servers.procurement.tools.compare_prices import compare_bid_price
+from mcp_servers.procurement.tools.flag_supplier_risk import (
+    flag_supplier_risk_record,
+)
 from mcp_servers.procurement.tools.generate_evaluation_report import (
     generate_evaluation_report_file,
 )
@@ -32,7 +35,7 @@ def check_bid_compliance(
     tender_id: str,
     bid_id: str,
 ) -> dict[str, Any]:
-    """Check a bid against mandatory tender requirements with sourced findings."""
+    """Check a bid against mandatory tender requirements."""
 
     return execute_logged(
         tool_name="check_bid_compliance",
@@ -49,7 +52,7 @@ def check_bid_compliance(
 
 @mcp.tool()
 def compare_prices(bid_id: str) -> dict[str, Any]:
-    """Compare a bid price with historical awards and return sourced findings."""
+    """Compare bid price with historical award values."""
 
     return execute_logged(
         tool_name="compare_prices",
@@ -59,16 +62,23 @@ def compare_prices(bid_id: str) -> dict[str, Any]:
 
 
 @mcp.tool()
+def flag_supplier_risk(bid_id: str) -> dict[str, Any]:
+    """Flag sourced supplier-data inconsistencies for human review."""
+
+    return execute_logged(
+        tool_name="flag_supplier_risk",
+        inputs={"bid_id": bid_id},
+        action=lambda: flag_supplier_risk_record(bid_id),
+    )
+
+
+@mcp.tool()
 def generate_evaluation_report(
     tender_id: str,
     bid_id: str,
     approved_by: str,
 ) -> dict[str, Any]:
-    """
-    Generate a sourced evaluation report after named human approval.
-
-    This tool does not award or reject the tender.
-    """
+    """Generate a draft report after named human approval."""
 
     return execute_logged(
         tool_name="generate_evaluation_report",

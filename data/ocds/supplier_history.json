@@ -1,0 +1,40 @@
+{
+  "records": [
+    {
+      "supplier_identifier": "SYNTH-ALPHA-001",
+      "supplier_name": "Alpha Technologies Ltd",
+      "ocid": "ocds-history-alpha-001",
+      "award_id": "AWARD-ALPHA-001",
+      "buyer": "Demo Public Institution A",
+      "amount": 39000000,
+      "currency": "TZS"
+    },
+    {
+      "supplier_identifier": "SYNTH-ALPHA-001",
+      "supplier_name": "Alpha Technologies Ltd",
+      "ocid": "ocds-history-alpha-002",
+      "award_id": "AWARD-ALPHA-002",
+      "buyer": "Demo Public Institution B",
+      "amount": 40500000,
+      "currency": "TZS"
+    },
+    {
+      "supplier_identifier": "SYNTH-BETA-001",
+      "supplier_name": "Beta Systems Ltd",
+      "ocid": "ocds-history-beta-001",
+      "award_id": "AWARD-BETA-001",
+      "buyer": "Demo Public Institution C",
+      "amount": 44000000,
+      "currency": "TZS"
+    },
+    {
+      "supplier_identifier": "SYNTH-BETA-001",
+      "supplier_name": "Beta Digital Services Ltd",
+      "ocid": "ocds-history-beta-002",
+      "award_id": "AWARD-BETA-002",
+      "buyer": "Demo Public Institution D",
+      "amount": 46000000,
+      "currency": "TZS"
+    }
+  ]
+}
