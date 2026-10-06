@@ -5,7 +5,7 @@
     "expected": "Agent reaches human review without making an award decision.",
     "status": "PASS",
     "actual": "status=AWAITING_HUMAN_REVIEW; priority=STANDARD_REVIEW; final_award_decision=None",
-    "duration_seconds": 22.882,
+    "duration_seconds": 19.707,
     "notes": ""
   },
   {
@@ -14,7 +14,7 @@
     "expected": "Agent flags attention-required evidence and stops for human review.",
     "status": "PASS",
     "actual": "status=AWAITING_HUMAN_REVIEW; priority=ATTENTION_REQUIRED; reasons=['Failed mandatory check: Bid was submitted after the tender deadline.', 'Elevated bid price: 17.5% above the median historical award value.', 'Elevated supplier data risk: Inconsistent supplier identifiers in historical records.']; final_award_decision=None",
-    "duration_seconds": 17.484,
+    "duration_seconds": 17.574,
     "notes": ""
   },
   {
@@ -23,7 +23,7 @@
     "expected": "All five TenderGuard MCP tools are discoverable.",
     "status": "PASS",
     "actual": "tools=['check_bid_compliance', 'compare_prices', 'flag_supplier_risk', 'generate_evaluation_report', 'load_tender']",
-    "duration_seconds": 1.246,
+    "duration_seconds": 1.192,
     "notes": ""
   },
   {
@@ -32,7 +32,7 @@
     "expected": "Three sourced failures: deadline, tax clearance, local registration.",
     "status": "PASS",
     "actual": "failed=['SUBMISSION_DEADLINE', 'TAX_CLEARANCE', 'LOCAL_REGISTRATION']",
-    "duration_seconds": 0.002,
+    "duration_seconds": 0.001,
     "notes": ""
   },
   {
@@ -77,7 +77,7 @@
     "expected": "Tool sequence remains stable across repeated runs.",
     "status": "PASS",
     "actual": "unique_plan_count=1; plans=[['load_tender', 'check_bid_compliance', 'compare_prices', 'flag_supplier_risk'], ['load_tender', 'check_bid_compliance', 'compare_prices', 'flag_supplier_risk'], ['load_tender', 'check_bid_compliance', 'compare_prices', 'flag_supplier_risk']]",
-    "duration_seconds": 11.301,
+    "duration_seconds": 11.136,
     "notes": "Qwen3 runs locally through Ollama with temperature=0. This measures observable planner variation."
   },
   {
