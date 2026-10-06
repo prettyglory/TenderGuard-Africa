@@ -13,3 +13,5 @@ reports/*.pdf
 .idea/
 reports/*.jsonl
 reports/*.md
+evidence/
+*.egg-info/
