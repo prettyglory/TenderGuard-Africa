@@ -187,6 +187,28 @@ Return JSON only.
 
     result = EvidenceSummary.model_validate_json(raw)
 
+    compliance_failed = compliance.get("status") != "COMPLIANT"
+
+    price_requires_attention = price_analysis.get("risk_level") in {
+        "ELEVATED",
+        "HIGH",
+        "LOW_PRICE_ANOMALY",
+    }
+
+    supplier_requires_attention = supplier_risk.get("risk_level") in {
+        "ELEVATED",
+        "HIGH",
+    }
+
+    if (
+        compliance_failed
+        or price_requires_attention
+        or supplier_requires_attention
+    ):
+        result.review_priority = "ATTENTION_REQUIRED"
+    else:
+        result.review_priority = "STANDARD_REVIEW"
+
     result.human_committee_required = True
     result.final_award_decision = None
 

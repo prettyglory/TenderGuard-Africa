@@ -91,6 +91,7 @@ async def run_evals() -> list[dict[str, Any]]:
 
         passed = (
             result["status"] == "AWAITING_HUMAN_REVIEW"
+            and support["review_priority"] == "STANDARD_REVIEW"
             and support["final_award_decision"] is None
             and support["human_committee_required"] is True
             and result["compliance"]["status"] == "COMPLIANT"
@@ -532,7 +533,7 @@ def write_outputs(results: list[dict[str, Any]]) -> None:
             f"{item['actual'].replace('|', '/')} |"
         )
 
-    document = f"""# TenderGuard Africa — Evaluation Report
+    document = f"""# TenderGuard Africa Ã¢â‚¬â€ Evaluation Report
 
 ## Evaluation Summary
 
@@ -562,7 +563,7 @@ or review flags, not accusations of fraud or misconduct.
 
 ## Known Unfixed Failure
 
-**EVAL-10 — Image-only/scanned PDF extraction: FAIL**
+**EVAL-10 - Image-only/scanned PDF extraction: FAIL**
 
 The current prototype does not contain an OCR pipeline for image-only bid
 documents. The evaluated bid documents are structured synthetic records.
